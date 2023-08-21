@@ -1,14 +1,16 @@
 import React, { useEffect } from 'react'
 import { useState } from 'react';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import axios from 'axios';
 import { Box, Button, Card, CardContent, Grid, Typography, TextField, Select, MenuItem, InputLabel, FormControl } from '@mui/material';
 import { Navigate } from 'react-router-dom';
-import { authDetails } from '../../redux/actionCreators';
-import jwtDecode from "jwt-decode";
 
-const Login = ({isAuthenticated, handleAuthentication}) => {
+import { authDetails, loading } from '../../redux/actionCreators';
 
+
+const Login = () => {
+
+  const state = useSelector(state => state);
   const dispatch = useDispatch();
   const [message, setMessage] = useState(null);
   const [formState, setFormState] = useState({
@@ -43,6 +45,7 @@ const Login = ({isAuthenticated, handleAuthentication}) => {
       setIsSubmitted(1);
     } 
     else {
+      dispatch(loading(true))
       axios.post("http://127.0.0.1:8000/api/auth/user/login/", formState, {
          headers: {
           "Content-Type": "application/json"
@@ -56,6 +59,7 @@ const Login = ({isAuthenticated, handleAuthentication}) => {
             email: "",
             password: "",
           })
+          dispatch(loading(false))
 
           dispatch(authDetails(response.data.token.access))
         }
@@ -102,7 +106,7 @@ const Login = ({isAuthenticated, handleAuthentication}) => {
   
 
 
-  if(isAuthenticated){
+  if(state.isAuthenticated){
     return <Navigate to={'/dashboard'} replace />
     // navigate('/dashboard')
   } else {

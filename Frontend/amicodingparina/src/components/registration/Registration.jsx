@@ -1,10 +1,13 @@
 import React, { useEffect } from 'react'
 import { useState } from 'react';
 import axios from 'axios';
+import { useDispatch } from 'react-redux';
 import { Box, Button, Card, CardContent, Grid, Typography, TextField, Select, MenuItem, InputLabel, FormControl } from '@mui/material';
+import { loading } from '../../redux/actionCreators';
 
 
 const Registration = () => {
+  const dispatch = useDispatch();
   const [message, setMessage] = useState(null);
   const [formState, setFormState] = useState({
     name: "",
@@ -35,20 +38,21 @@ const Registration = () => {
 
   const handleSubmit = (event) => {
     const validationErrors = validate(formState);
-    console.log(validationErrors)
+    // console.log(validationErrors)
     if (Object.keys(validationErrors).length > 0 && validationErrors.password2 !== null) {
       setErrors(validationErrors);
       setIsSubmitted(1);
     } 
     else {
+      dispatch(loading(true))
       axios.post("http://127.0.0.1:8000/api/auth/user/registration/", formState, {
          headers: {
           "Content-Type": "application/json"
          }
       })
       .then(response=> {
-        // console.log(response)
         if(response.status === 201){
+          dispatch(loading(false))
           setMessage(response.data.msg);
           setFormState({
             name: "",

@@ -1,5 +1,5 @@
 
-import { useEffect, useState } from 'react'
+import { useEffect } from 'react'
 
 import { Routes, Route, Navigate } from 'react-router-dom'
 
@@ -8,28 +8,29 @@ import Navbar from './components/app_bar/Navbar'
 import Login from './components/login/Login'
 import Registration from './components/registration/Registration'
 import Dashboard from './components/dashboard/Dashboard'
-import ProtectedRoute from './protectedRoute/ProtectedRoute'
-import { useDispatch, useSelector } from 'react-redux'
 import Data from './components/data/Data'
-import { authCheck, authDetails, logout } from './redux/actionCreators'
 import Logout from './components/logout/Logout'
+import Home from './components/home/Home'
+
+import { authCheck } from './redux/actionCreators'
+import { useDispatch } from 'react-redux'
 
 function App() {
-  const state = useSelector(state => state);
+  const dispatch = useDispatch()
 
   useEffect(()=> {
-    authCheck()
+    dispatch(authCheck())
   }, [])
 
   return (
     <>
-      <Navbar isAuthenticated={state.isAuthenticated} />
+      <Navbar />
       <Routes>
+        <Route path="/*" element={<Home />} />
+        <Route path='/dashboard' exact element={<Dashboard />} />
         <Route path='/data' exact element={<Data />} />
-        <Route path='/dashboard' exact element={<Dashboard isAuthenticated={state.isAuthenticated} />} />
-        <Route path="/" element={<Navigate to="/dashboard" replace />} />
         
-        <Route path='/login' exact element={<Login isAuthenticated={state.isAuthenticated} />} />
+        <Route path='/login' exact element={<Login />} />
         <Route path='/register' exact element={<Registration />} />
         <Route path='/logout' exact element={ <Logout />} />
         {/* <Route path="*" element={<Navigate to="/" replace />} /> */}

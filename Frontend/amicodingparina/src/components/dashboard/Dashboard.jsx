@@ -5,9 +5,8 @@ import { Navigate } from 'react-router-dom';
 import { Box, Button, Card, CardContent, Grid, Typography, TextField, Select, MenuItem, InputLabel, FormControl } from '@mui/material';
 import { useSelector } from 'react-redux';
 
-const Dashboard = ({isAuthenticated}) => {
+const Dashboard = () => {
   const state = useSelector(state => state);
-  // console.log(state)
   const [message, setMessage] = useState(null);
   const [formState, setFormState] = useState({ array: "", search_value: "" });
   const [isSubmitted, setIsSubmitted] = useState(0);
@@ -118,7 +117,7 @@ const Dashboard = ({isAuthenticated}) => {
   )
 
   
-  if(isAuthenticated){
+  if(state.isAuthenticated){
     return (
       <Box sx={{ marginTop: "100px", width: "100%" }}>
         

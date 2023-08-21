@@ -29,6 +29,11 @@ Frontend/amicodingparina/node_modules
 /node_modules
 env
 /env
-Backend/amicodingparina/.vscode
+.vscode
 /.vscode
+db.sqlite3
+__pycache__
+/__pycache__
+amicodingparina/__pycache__
+.__pycache__
 

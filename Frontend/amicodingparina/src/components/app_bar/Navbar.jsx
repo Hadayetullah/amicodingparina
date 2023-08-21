@@ -17,12 +17,17 @@ import LockOpenIcon from "@mui/icons-material/LockOpen";
 import Hidden from '@mui/material/Hidden';
 
 import { Link, useNavigate } from 'react-router-dom';
+import { useDispatch, useSelector } from 'react-redux';
+import { logout } from '../../redux/actionCreators';
+
 
 const pages = ['Dashboard', 'Data'];
 const settings = ['Dashboard', 'Data', 'Logout'];
 const auth = ['Register', 'Login'];
 
-function Navbar({isAuthenticated}) {
+function Navbar() {
+  const state = useSelector(state => state);
+  const dispatch = useDispatch();
   const navigate = useNavigate()
   const [anchorElNav, setAnchorElNav] = React.useState(null);
   const [anchorElUser, setAnchorElUser] = React.useState(null);
@@ -46,7 +51,7 @@ function Navbar({isAuthenticated}) {
   const handleCloseNavMenu = (page) => {
     if(page){
       setAnchorElNav(null);
-      if(isAuthenticated){
+      if(state.isAuthenticated){
         navigate(page);
       } else if(page === '/register' || page === '/login') {
         navigate(page);
@@ -58,12 +63,21 @@ function Navbar({isAuthenticated}) {
     }
   };
 
-  const handleCloseUserMenu = (setting) => {
+  const handleCloseUserMenu = () => {
+    setAnchorElUser(null);
+  };
+
+  const handleCloseUserMenuContent = (setting) => {
     if(setting){
-      setAnchorElUser(null);
-      navigate(setting);
+      handleCloseUserMenu();
+      if(setting === '/logout'){
+        dispatch(logout())
+        navigate('/login')
+      } else {
+        navigate(setting);
+      }
     } else {
-      setAnchorElUser(null);
+      handleCloseUserMenu();
     }
   };
 
@@ -104,63 +118,6 @@ function Navbar({isAuthenticated}) {
           </IconButton>
         </Tooltip>
       </Link>
-    </Box>
-  )
-
-
-  const authentic = (
-    <Box sx={{ flexGrow: 0 }}>
-      <Tooltip title="Open settings">
-        <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
-          <Avatar alt={"H"} src="/static/images/avatar/2.jpg" />
-        </IconButton>
-      </Tooltip>
-      <Menu
-        sx={{ mt: '45px' }}
-        id="menu-appbar"
-        anchorEl={anchorElUser}
-        anchorOrigin={{
-          vertical: 'top',
-          horizontal: 'right',
-        }}
-        keepMounted
-        transformOrigin={{
-          vertical: 'top',
-          horizontal: 'right',
-        }}
-        open={Boolean(anchorElUser)}
-        onClose={handleCloseUserMenu}
-      >
-        {settings.map((setting) => (
-          <MenuItem key={setting} onClick={()=>handleCloseUserMenu(`/${setting.replace(/\s/g, "").toLowerCase()}`)}>
-            <Typography textAlign="center">{setting}</Typography>
-          </MenuItem>
-        ))}
-      </Menu>
-    </Box>
-  )
-
-
-  const notAuthentic = (
-
-    <Box sx={{ flexGrow: 0}}>
-      {icon === "register" ? login : register}
-      <Hidden mdDown>
-        {auth.map((page) => (
-          <Button
-            key={page}
-            onClick={()=>handleCloseNavMenu(`/${page.replace(/\s/g, "").toLowerCase()}`)}
-            sx={{ my: 2, color: "white"}}
-          >
-            <Link
-              style={{ textDecoration: "none", color: "white" }}
-              to={`/${page.replace(/\s/g, "").toLowerCase()}`}
-            >
-              {page}
-            </Link>
-          </Button>
-        ))}
-      </Hidden>
     </Box>
   )
 
@@ -255,9 +212,64 @@ function Navbar({isAuthenticated}) {
             ))}
           </Box>
 
+          {/* Authenticated */}
+          <Box sx={{ 
+            flexGrow: 0,
+            display: `${state.isAuthenticated ? "block" : "none"}`
+          }}>
+            <Tooltip title="Open settings">
+              <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
+                <Avatar alt={"H"} src="/static/images/avatar/2.jpg" />
+              </IconButton>
+            </Tooltip>
+            <Menu
+              sx={{ mt: '45px' }}
+              id="menu-appbar"
+              anchorEl={anchorElUser}
+              anchorOrigin={{
+                vertical: 'top',
+                horizontal: 'right',
+              }}
+              keepMounted
+              transformOrigin={{
+                vertical: 'top',
+                horizontal: 'right',
+              }}
+              open={Boolean(anchorElUser)}
+              onClose={handleCloseUserMenu}
+            >
+              {settings.map((setting) => (
+                <MenuItem key={setting} onClick={()=>handleCloseUserMenuContent(`/${setting.replace(/\s/g, "").toLowerCase()}`)}>
+                  <Typography textAlign="center">{setting}</Typography>
+                </MenuItem>
+              ))}
+            </Menu>
+          </Box>
 
+          {/* Not authenticated */}
+          <Box sx={{ 
+            flexGrow: 0,
+            display: `${!state.isAuthenticated ? "block" : "none"}`
+          }}>
+            {icon === "register" ? login : register}
+            <Hidden mdDown>
+              {auth.map((page) => (
+                <Button
+                  key={page}
+                  onClick={()=>handleCloseNavMenu(`/${page.replace(/\s/g, "").toLowerCase()}`)}
+                  sx={{ my: 2, color: "white"}}
+                >
+                  <Link
+                    style={{ textDecoration: "none", color: "white" }}
+                    to={`/${page.replace(/\s/g, "").toLowerCase()}`}
+                  >
+                    {page}
+                  </Link>
+                </Button>
+              ))}
+            </Hidden>
+          </Box>
 
-          {isAuthenticated ? authentic : notAuthentic}
         </Toolbar>
       </Container>
     </AppBar>

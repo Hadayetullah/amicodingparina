@@ -3,6 +3,7 @@ const authState = {
   token: null,
   userId: null,
   isAuthenticated: null,
+  isLoding: true,
 };
 
 const Reducer = (state = authState, action) => {
@@ -13,6 +14,13 @@ const Reducer = (state = authState, action) => {
         token: action.payload.token,
         userId: action.payload.userId,
         isAuthenticated: true,
+        isLoding: false,
+      };
+
+    case actionTypes.LOADING:
+      return {
+        ...state,
+        isLoding: action.payload,
       };
 
     case actionTypes.LOGOUT:
@@ -21,6 +29,7 @@ const Reducer = (state = authState, action) => {
         token: null,
         userId: null,
         isAuthenticated: false,
+        isLoding: false,
       };
     default:
       return state;

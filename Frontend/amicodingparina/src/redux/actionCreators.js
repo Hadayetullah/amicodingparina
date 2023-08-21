@@ -1,16 +1,34 @@
 import * as actionTypes from "./actionTypes";
 import jwtDecode from "jwt-decode";
+import axios from "axios";
 
 export const authCheck = () => (dispatch) => {
-  const token = localStorage.getItem("token");
-  if (!token) {
-    dispatch(logout());
+  const url = window.location.pathname.split("/");
+
+  if (url[1] === "authenticate") {
+    axios
+      .get(`http://127.0.0.1:8000/api/auth/authenticate/${url[2]}/${url[3]}/`, {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      })
+      .then((response) => {
+        if (response.status === 201) {
+          dispatch(authDetails(response.data.token.access));
+        }
+      })
+      .catch((err) => console.log(err));
   } else {
-    const expirationTime = new Date(localStorage.getItem("expirationTime"));
-    if (expirationTime <= new Date()) {
+    const token = localStorage.getItem("token");
+    if (!token) {
       dispatch(logout());
     } else {
-      dispatch(authDetails(token));
+      const expirationTime = new Date(localStorage.getItem("expirationTime"));
+      if (expirationTime <= new Date()) {
+        dispatch(logout());
+      } else {
+        dispatch(authDetails(token));
+      }
     }
   }
 };
@@ -34,6 +52,11 @@ export const authDetails = (token) => (dispatch) => {
     },
   });
 };
+
+export const loading = (payload) => ({
+  type: actionTypes.LOADING,
+  payload: payload,
+});
 
 export const logout = () => (dispatch) => {
   localStorage.removeItem("token");
