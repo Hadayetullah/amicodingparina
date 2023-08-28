@@ -1,3 +1,6 @@
+import re
+from rest_framework.response import Response
+from rest_framework import status
 from rest_framework import serializers
 from django.utils import timezone
 
@@ -9,6 +12,14 @@ from . import models
 from .utils import Util
 
 
+# Custom functions
+def phoneNumberExists(modified_number):
+    user = models.User.objects.filter(phone=modified_number).first()
+    return user
+
+
+
+# Serializers
 class UserRegistrationSerializer(serializers.ModelSerializer):
     password2 = serializers.CharField(
         style={'input_type': 'password'}, write_only=True
@@ -22,13 +33,26 @@ class UserRegistrationSerializer(serializers.ModelSerializer):
                 "write_only": True
             }
         }
+    
 
     def validate(self, attrs):
+        phone_pattern = r'^(?:\+88|88)?01([3456789]\d{8})$'
+
+        phone = attrs.get('phone')
         password = attrs.get('password')
         password2 = attrs.get('password2')
-        if password != password2:
+
+        modified_number = phone[-10:]
+
+        if not re.match(phone_pattern, phone):
+            raise serializers.ValidationError({"phone": "Invalid phone number"})
+        elif phoneNumberExists(modified_number):
+            raise serializers.ValidationError({"phone": "user with this phone number already exists."})
+        elif password != password2:
             raise serializers.ValidationError(
-                "Password and confirm password doesn't match")
+                {"password": "Password and confirm password doesn't match"})
+        
+        attrs['phone'] = modified_number
         return attrs
 
     def create(self, validated_data):

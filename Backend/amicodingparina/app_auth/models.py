@@ -42,10 +42,11 @@ class UserManager(BaseUserManager):
 
 # Custom User Model.
 class User(AbstractBaseUser):
-    name = models.CharField(verbose_name="Name", max_length=255)
-    email = models.EmailField(verbose_name="Email",
+    name = models.CharField(verbose_name="name", max_length=255)
+    email = models.EmailField(verbose_name="email address",
                               max_length=255, unique=True)
-    phone = models.CharField(verbose_name="Phone", max_length=20)
+    phone = models.CharField(verbose_name="phone number",
+                             max_length=20, unique=True)
     # date_of_birth = models.DateField()
     is_active = models.BooleanField(default=False)
     is_admin = models.BooleanField(default=False)

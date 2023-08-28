@@ -40,7 +40,8 @@ class UserRegistrationView(APIView):
 
 
 class UserRegistrationVarificationView(APIView):
-    # renderer_classes = [renderers.UserRenderer]
+    renderer_classes = [renderers.UserRenderer]
+
     def get(self, request, uid, user_token, format=None):
         try:
             id = smart_str(urlsafe_base64_decode(uid))

@@ -147,6 +147,7 @@ EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 587
 EMAIL_HOST_USER = "Your email address"
 EMAIL_HOST_PASSWORD = "Password of the email"
+
 EMAIL_USE_TLS = True
 
 # Simple JWT Settings
