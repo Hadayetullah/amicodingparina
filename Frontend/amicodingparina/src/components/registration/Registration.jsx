@@ -51,6 +51,7 @@ const Registration = () => {
          }
       })
       .then(response=> {
+        console.log("Response: ",response)
         if(response.status === 201){
           dispatch(loading(false))
           setMessage(response.data.msg);
@@ -62,7 +63,8 @@ const Registration = () => {
             password2: "",
           })
         }
-      });
+      })
+      .catch(err => console.log("Err: ",err))
     }
     event.preventDefault();
   };

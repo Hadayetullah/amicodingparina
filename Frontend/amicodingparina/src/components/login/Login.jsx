@@ -52,7 +52,7 @@ const Login = () => {
          }
       })
       .then(response=> {
-        // console.log(response)
+        // console.log("Login Response: ",response)
         if(response.status === 200){
           // setMessage(response.data.msg);
           setFormState({

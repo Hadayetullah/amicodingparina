@@ -44,7 +44,7 @@ const Dashboard = () => {
       setErrors(validationErrors);
       setIsSubmitted(1);
     } else {
-      if(isAuthenticated) {
+      if(state.isAuthenticated) {
         const formObj = {};
         const token = state.token;
         const userId = state.userId;
